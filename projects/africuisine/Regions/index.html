@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <title>AfriCuisine — Régions</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700&family=Forum&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f8faf7;
+      --paper: #ffffff;
+      --ink: #1f2937;
+      --muted: #6b7280;
+      --line: #d1d5db;
+      --accent: #6aa84f;
+      --accent-soft: #d9ead3;
+      --bar: #6aa84f;
+      --track: #eef2ef;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 16px/1.5 "DM Sans", "Helvetica Neue", Arial, sans-serif;
+    }
+    main { max-width: 1240px; margin: 0 auto; padding: 40px 20px 80px; }
+    h1 { font-size: 2.4rem; font-weight: 600; letter-spacing: -0.03em; margin: 0 0 8px; }
+    h2 { font-size: 1.25rem; font-weight: 600; margin: 0 0 12px; }
+    p { margin: 0; }
+    .lede { color: var(--muted); max-width: 68ch; }
+    .lede mark { background: var(--accent-soft); color: var(--ink); font-weight: 600; padding: 0 0.25em; white-space: nowrap; }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin: 28px 0; }
+    .stat { background: var(--paper); border: 1px solid var(--line); padding: 14px 16px; }
+    .stat b { display: block; font-family: Forum, Georgia, serif; font-weight: 400; font-size: 2.4rem; line-height: 1.1; font-variant-numeric: tabular-nums; }
+    .stat span { color: var(--muted); font-size: 0.85rem; }
+    section { margin-top: 36px; }
+    .controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 12px; }
+    label { font-size: 0.85rem; color: var(--muted); }
+    select, input[type="search"] {
+      font: inherit;
+      color: var(--ink);
+      background: var(--paper);
+      border: 1px solid var(--line);
+      padding: 8px 10px;
+      min-width: 220px;
+    }
+    .pills { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 16px; }
+    button.pill {
+      font: inherit;
+      font-size: 0.9rem;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      padding: 6px 10px;
+      cursor: pointer;
+      color: var(--ink);
+    }
+    button.pill[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+    table { width: 100%; border-collapse: collapse; background: var(--paper); font-size: 0.95rem; }
+    th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { font-size: 0.78rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+    td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    tr:hover td { background: var(--accent-soft); }
+    thead th { background: var(--accent-soft); }
+    .bar-cell { width: 28%; }
+    .bar { height: 8px; background: var(--bar); }
+    .caption { color: var(--muted); font-size: 0.85rem; margin-top: 8px; }
+    .scroll { overflow-x: auto; border: 1px solid var(--line); }
+    .rules-scroll { overflow: auto; border: 1px solid var(--line); }
+    .rules-scroll thead th { position: sticky; top: 0; background: var(--accent-soft); z-index: 1; }
+    .compare-scroll { margin-top: 12px; }
+    .share-chart { margin: 0; background: var(--paper); border: 1px solid var(--line); padding: 14px 16px 10px; }
+    .hist { display: grid; grid-template-columns: 2rem minmax(0, 1fr); gap: 8px; }
+    .hist-y { display: flex; flex-direction: column; justify-content: space-between; height: 220px; margin-top: 1.1rem; color: var(--muted); font-size: 0.75rem; text-align: right; }
+    .hist-scroll { overflow-x: auto; }
+    .hist-bars { display: flex; align-items: flex-start; gap: 4px; min-width: 720px; }
+    .hist-col { flex: 1 0 0; display: flex; flex-direction: column; align-items: center; min-width: 0; }
+    .hist-value { height: 1.1rem; font-size: 0.7rem; line-height: 1.1rem; font-variant-numeric: tabular-nums; }
+    .hist-track { height: 220px; width: 70%; max-width: 28px; background: var(--track); display: flex; align-items: flex-end; box-shadow: 0 1px 0 var(--line); }
+    .hist-fill { display: block; width: 100%; background: var(--bar); }
+    .hist-name { margin-top: 6px; height: 5.6rem; writing-mode: vertical-rl; transform: rotate(180deg); font-size: 0.72rem; white-space: nowrap; }
+    .pie-row { display: flex; flex-wrap: wrap; gap: 28px; align-items: center; }
+    .pie-row svg { width: min(240px, 100%); height: auto; flex: none; }
+    .pie-legend { list-style: none; margin: 0; padding: 0; }
+    .group-board { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin-top: 12px; align-items: start; }
+    .group-card { background: var(--paper); border: 1px solid var(--line); padding: 12px 14px 10px; }
+    .group-card h3 { margin: 0 0 10px; font-size: 1rem; font-weight: 600; display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+    .group-card h3 span { color: var(--muted); font-weight: 400; font-size: 0.85rem; font-variant-numeric: tabular-nums; }
+    .gbar { margin: 7px 0 0; }
+    .gbar-top { display: flex; justify-content: space-between; gap: 10px; font-size: 0.88rem; }
+    .gbar-top b { font-variant-numeric: tabular-nums; font-weight: 600; }
+    .gbar-track { display: block; height: 8px; margin-top: 3px; background: var(--track); }
+    .gbar-fill { display: block; height: 100%; background: var(--bar); }
+    .pie-legend li { display: flex; gap: 10px; align-items: baseline; margin: 10px 0; }
+    .swatch { width: 0.85rem; height: 0.85rem; flex: none; transform: translateY(0.1rem); }
+    .top { display: flex; justify-content: space-between; gap: 20px; align-items: flex-start; }
+    .lang { display: flex; gap: 8px; flex: none; }
+    @media (max-width: 800px) {
+      .stats { grid-template-columns: 1fr 1fr; }
+      h1 { font-size: 1.6rem; }
+      .bar-cell { display: none; }
+      .top { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="top">
+      <div>
+        <h1 id="title"></h1>
+        <p class="lede" id="lede"></p>
+      </div>
+      <div class="lang" role="group" aria-label="Language">
+        <button type="button" class="pill" id="lang-fr">Français</button>
+        <button type="button" class="pill" id="lang-en">English</button>
+      </div>
+    </div>
+    <div class="stats" id="stats"></div>
+
+    <section id="rules-section">
+      <h2 id="rules-title"></h2>
+      <div class="rules-scroll" id="rules-wrap"><table id="rules"></table></div>
+      <p class="caption" id="rules-caption"></p>
+    </section>
+
+    <section>
+      <h2 id="detail-title"></h2>
+      <div class="controls">
+        <label><span id="country-label"></span><br><select id="country"></select></label>
+        <label><span id="query-label"></span><br><input id="query" type="search"></label>
+      </div>
+      <div class="pills" id="files"></div>
+      <p class="caption" id="selection-meta"></p>
+      <div class="scroll"><table id="groups"></table></div>
+    </section>
+
+    <section>
+      <h2 id="compare-title"></h2>
+      <p class="lede" id="compare-lede"></p>
+      <div class="scroll compare-scroll"><table id="overview"></table></div>
+    </section>
+
+  </main>
+  <script>
+    const COUNTRIES = [{"id":"angola","name":"Angola","files":[{"id":"angola-portuguese","country":"Angola","label":"Portuguese","file":"Angola/Angola - Portuguese.xlsx","sheet":"Main - English","dishes":27,"groups":[{"name":"Luanda","count":5},{"name":"Zaire, Uíge, Cabinda","count":3},{"name":"Cabinda","count":2},{"name":"Luanda, Uíge, Zaire, Cabinda.","count":1},{"name":"Uíge, Cuanza Norte,Moxico Luanda, Bengo, Cuando Cubango","count":1},{"name":"Uíge and Zaíre","count":1},{"name":"Uíge, Zaíre, Bengo and Cuanza Norte","count":1},{"name":"Malange","count":1},{"name":"Uíge","count":1},{"name":"Luanda, Bengo, Cuanza Norte, Cuanza Sul and Malanje","count":1},{"name":"Cabinda, Zaire and Uige","count":1},{"name":"Cuanza Sul, Luanda","count":1},{"name":"Cunene","count":1},{"name":"Cabinda , Uíge, Zaíre","count":1},{"name":"Bengo, Malanje and Cuanza Sul","count":1},{"name":"Central-Southern and Eastern Angola (Lunda Sul, Lunda Norte, Malalanje and Moxico).","count":1},{"name":"Luanda, Uíge, Cabinda, Zaíre","count":1},{"name":"Luanda, Bengo, Cuanza Norte and Moxico","count":1},{"name":"Luanda, Malanje, Bengo","count":1},{"name":"Luanda, Cuanza Sul","count":1}]},{"id":"angola-umbundu","country":"Angola","label":"Umbundu","file":"Angola/Angola - Umbundu.xlsx","sheet":"Main - English","dishes":12,"groups":[{"name":"Huambo, Bié","count":1},{"name":"Luanda, Bengo, Cuanza Norte, Cuanza Sul, and Malanje","count":1},{"name":"Malange, Uíge, Lunda Norte, Huíla","count":1},{"name":"Moxico","count":1},{"name":"Huambo, Benguela, Bié and Cuanza Sul.","count":1},{"name":"Huambo, Bié, Benguela and Huíla","count":1},{"name":"Huambo, Bié, Benguela and Namibe","count":1},{"name":"Huambo","count":1},{"name":"Luanda, Benguela. Namibe and Cuanza Sul","count":1},{"name":"Huambo, Benguela, Bié.","count":1},{"name":"Benguela","count":1},{"name":"Huambo, Bié Malanje, Cuanza Sul and Uíge","count":1}]}]},{"id":"benin","name":"Benin","files":[{"id":"benin-fon","country":"Benin","label":"Fon","file":"Benin/Benin - Fon.xlsx","sheet":"Main","dishes":25,"groups":[{"name":"Abomey","count":9},{"name":"Porto-Novo","count":5},{"name":"Abomey-Calavi","count":2},{"name":"Cotonou","count":2},{"name":"Dassa-Zoumé","count":1},{"name":"Ouidah","count":1},{"name":"Aja","count":1},{"name":"Parakou","count":1},{"name":"Grand-popo","count":1},{"name":"Comè","count":1},{"name":"Savalou","count":1}]},{"id":"benin-yoruba","country":"Benin","label":"Yoruba","file":"Benin/Benin - Yoruba.xlsx","sheet":"Main - Englis","dishes":25,"groups":[{"name":"Porto-novo","count":9},{"name":"Porto novo","count":3},{"name":"porto novo and yoruba speaking area","count":2},{"name":"Porto-Novo, ketou","count":1},{"name":"Porto-Novo, ketou, Savalou, Parakou","count":1},{"name":"Porto novo, ketou, north benin","count":1},{"name":"Porto-novo, ketou, dangbo","count":1},{"name":"This dish is found everywhere in Benin","count":1},{"name":"Porto novo and some yoruba communities side","count":1},{"name":"porto novo","count":1},{"name":"porto novo, yoruba speaking area","count":1},{"name":"yoruba speaking area, porto-novo","count":1},{"name":"porto-novo, yoruba communities","count":1},{"name":"yoruba communities, porto-novo","count":1}]}]},{"id":"cameroon","name":"Cameroon","files":[{"id":"cameroon-bassa","country":"Cameroon","label":"Bassa","file":"Cameroon/Cameroon - Bassa.xlsx","sheet":"Main - English","dishes":25,"groups":[{"name":"Littoral région","count":6},{"name":"Southwest Region","count":6},{"name":"Littoral region","count":3},{"name":"South Region","count":3},{"name":"Littoral Région","count":3},{"name":"Littoral Region and Center Region","count":1},{"name":"Littoral","count":1},{"name":"Littoral Region","count":1},{"name":"Southwest Region, Cameroon","count":1}]},{"id":"cameroon-ghomala","country":"Cameroon","label":"Ghomáláʼ","file":"Cameroon/Cameroon - Ghomáláʼ.xlsx","sheet":"Main - English","dishes":25,"groups":[{"name":"Région de l'Ouest Cameroun","count":12},{"name":"Région de l'Ouest","count":10},{"name":"Western Region of Cameroon","count":1},{"name":"Ouest Cameroun / Nord-Ouest Cameroun","count":1},{"name":"Région de l'Ouest et du Nord-ouest","count":1}]},{"id":"cameroon-sud","country":"Cameroon","label":"Sud","file":"Cameroon/Cameroon - Sud.xlsx","sheet":"Sheet1","dishes":21,"groups":[{"name":"Région du Sud et du Centre","count":5},{"name":"Région du Sud","count":3},{"name":"Région du Sud, du centre","count":2},{"name":"Région du Sud, du Centre","count":2},{"name":"Région du Sud, de l'Est et du Centre.","count":1},{"name":"Régions du Centre, du Sud, de l'Est et di littoral","count":1},{"name":"Région du Sud et du Centre.","count":1},{"name":"Région du Sud, du Centre, du littoral, de l'ouest","count":1},{"name":"Région du Centre et du Sud","count":1},{"name":"Sud, Centre, Littoral","count":1},{"name":"Région du Sud , Centre et de l'Est Cameroun","count":1},{"name":"Régions du Sud , du centre Cameroun","count":1},{"name":"Région du Sud, du Centre et de l'Est Cameroun","count":1}]}]},{"id":"chad","name":"Chad","files":[{"id":"chad-sara","country":"Chad","label":"Sara","file":"Chad/Chad - Sara.xlsx","sheet":"Main - English","dishes":18,"groups":[{"name":"Southern Chad","count":10},{"name":"Southern Chad, particularly communities around the Chari and Logone river basins.","count":2},{"name":"Shared accross several ethnocultural communities of southern Chad, including but not limited to Sara communities.","count":1},{"name":"Mandoul; Moyen-Chari","count":1},{"name":"Southern Chad (Moyen-Chari; Logone Occidental; Logone Oriental; Mandoul; Tandjilé; etc)","count":1},{"name":"Southern Chad, including rivers Chari and Logone basins areas","count":1},{"name":"Moyen Chari, Logone Oriental","count":1},{"name":"Moyen-Chari; Logone Oriental; Logone Occidental; other southern regions","count":1}]}]},{"id":"drc","name":"DRC","files":[{"id":"drc-lingala","country":"DRC","label":"Lingala","file":"DRC/DRC - Lingala.xlsx","sheet":"Main - English","dishes":57,"groups":[{"name":"Nord-Kivu, Sud-Kivu","count":4},{"name":"Kinshasa","count":3},{"name":"Kongo Central, Kinshasa","count":3},{"name":"Équateur, Kinshasa","count":3},{"name":"Équateur, Mongala","count":2},{"name":"Kinshasa et Kongo Central","count":1},{"name":"Kongo Central, Kinshasa.","count":1},{"name":"Kinshasa, Kongo Central","count":1},{"name":"Kongo Central and Kinshasa","count":1},{"name":"Équateur, Mai-Ndombe, Kinshasa","count":1},{"name":"Kinshasa, Kananga, Mbuji Mayi","count":1},{"name":"Kinshasa, Kananga, Mbuji Mayi, Lubumbashi, Kongo Central Kolwezi,","count":1},{"name":"Kongo","count":1},{"name":"Kongo central province","count":1},{"name":"Kongo Central, Mai-Ndombe, Cuvette Centrale, Kinshasa","count":1},{"name":"The province of Kongo Central","count":1},{"name":"Kinshasa, Kongo Central, Lubumbashi, Kolwezi.","count":1},{"name":"Bas fleuve district in the Kongo Central province","count":1},{"name":"Kongo Central (Lukula, Boma, Matadi)","count":1},{"name":"The Bas-Fleuve District in Kongo Central Province","count":1},{"name":"Kinshasa, Kongo Central, Kwilu, Haut-Katanga","count":1},{"name":"The Province of Central Kongo","count":1},{"name":"Central Kongo Province","count":1},{"name":"Équateur, Mai-Ndombe, Kongo Central","count":1},{"name":"Kinshasa, Équateur and Kongo Central","count":1},{"name":"Various provinces of the Democratic Republic of the Congo","count":1},{"name":"Kinshasa, Bas-Congo, Équateur","count":1},{"name":"Toutes les provinces.","count":1},{"name":"Kongo Central, Mai-Ndombe, Équateur, Kwilu","count":1},{"name":"Tshopo, Bas-Uele","count":1},{"name":"Équateur (Mbandaka, Basankusu)","count":1},{"name":"Équateur (Mbandaka)","count":1},{"name":"Équateur, Mongala, Nord-Ubangi, and Sud-Ubangi","count":1},{"name":"Sud-Ubangi, Nord-Ubangi","count":1},{"name":"Haut-Katanga, Lualaba, Haut-Lomami","count":1},{"name":"Lualaba, Haut-Katanga","count":1},{"name":"Haut-Katanga, Lualaba","count":1},{"name":"Tanganyika (Kalemie)","count":1},{"name":"Sud-Kivu","count":1},{"name":"Sud-Kivu (Bukavu)","count":1},{"name":"Sud-Kivu, Nord-Kivu, Tanganyikâ, Haut-Katanga, Kinshasa, Kongo Central","count":1},{"name":"Nord-Kivu (Goma), Sud-Kivu (Bukavu)","count":1},{"name":"Nord-Kivu, Sud-Kivu, Maniema, Katanga","count":1},{"name":"Ituri, Tshopo","count":1},{"name":"Haut-Uele, Bas-Uele","count":1},{"name":"Haut-Katanga, Nord-Kivu, Sud-Kivu","count":1}]},{"id":"drc-mbala","country":"DRC","label":"Mbala","file":"DRC/DRC - MBALA TRANSLATION.xlsx","sheet":"Main - English","dishes":17,"groups":[{"name":"Kinshasa, Bandundu","count":1},{"name":"Kongo Central, Kwango, Kwilu, Kinshasa","count":1},{"name":"Kongo central, Mai-Ndombe, Ecuador, Kwilu, Kasai","count":1},{"name":"Kongo Central, Kinshasa, Bandundu","count":1},{"name":"Kinshasa, Bas-Congo, Bandundu","count":1},{"name":"Kinshasa, Kongo Central, Kwango, Kwilu","count":1},{"name":"Kinshasa, Équateur, Bandundu","count":1},{"name":"Kwango, Kwilu (Kenge, Kikwit)","count":1},{"name":"Kwilu, Kwango","count":1},{"name":"Kwilu, Mai-Ndombe","count":1},{"name":"Kwilu, Mai-Ndombe, Kasai","count":1},{"name":"Équateur, Bandundu, Kinshasa","count":1},{"name":"Kinshasa, Bandundu, Équateur","count":1},{"name":"Kasai, Kongo central, Kwilu, Équateur, Haut-Katanga.","count":1},{"name":"Kwango","count":1},{"name":"Mai-Ndombe (Inongo)","count":1},{"name":"Mai-Ndombe, Équateur, Kinshasa","count":1}]},{"id":"drc-tshiluba","country":"DRC","label":"Tshiluba","file":"DRC/DRC - TSHILUBA TRANSLATION.xlsx","sheet":"Main - English","dishes":17,"groups":[{"name":"Kasaï-Oriental, Lomami","count":2},{"name":"Kasaï-Central, Kasaï-Oriental","count":2},{"name":"Sankuru, Kasaï","count":1},{"name":"Kasaï, Sankuru","count":1},{"name":"Kasaï, Kananga, Mbuji Mayi, Lubumbashi","count":1},{"name":"Kasaï-Central","count":1},{"name":"Kasaï-Oriental","count":1},{"name":"Kasaï","count":1},{"name":"Grand Kasaï (Kananga, Mbuji-Mayi)","count":1},{"name":"Kananga, Mbuji Mayi, Lubumbashi, Kasaï","count":1},{"name":"Haut-Katanga, Lualaba, Kasai, Kasai-Central, Kasai-Oriental, Kongo Central, Kwilu","count":1},{"name":"Haut-Lomami","count":1},{"name":"Luba","count":1},{"name":"Kananga, Mbuji Mayi, Lubumbashi","count":1},{"name":"Haut-Lomami, Haut-Katanga","count":1}]}]},{"id":"ethiopia","name":"Ethiopia","files":[{"id":"ethiopia-afan-oromo","country":"Ethiopia","label":"Afan Oromo","file":"Ethiopia/Ethiopia - Afan Oromo.xlsx","sheet":"Main - English","dishes":13,"groups":[{"name":"Oromia","count":8},{"name":"Oromia Region","count":2},{"name":"Oromo region","count":2},{"name":"Oromo","count":1}]},{"id":"ethiopia-amharic","country":"Ethiopia","label":"Amharic","file":"Ethiopia/Ethiopia - Amharic.xlsx","sheet":"Main - English","dishes":9,"groups":[{"name":"Amhara region","count":3},{"name":"Amhara Widespread across central and northern highlands (including Addis Ababa, Amhara Region, Oromia Region, Tigray Region, and Gurage Zone)","count":1},{"name":"Central Ethiopia","count":1},{"name":"Amhara and most part of Ethiopia","count":1},{"name":"Amhara Region and most parts of Ethiopia","count":1},{"name":"Amhara region and most parts of Ethiopia","count":1},{"name":"South Ethiopia, Central Ethiopia","count":1}]},{"id":"ethiopia-gurage","country":"Ethiopia","label":"Gurage","file":"Ethiopia/Ehtiopia - Gurage.xlsx","sheet":"Main - English","dishes":9,"groups":[{"name":"Central Ethiopia","count":2},{"name":"Southern and Central Ethiopia","count":2},{"name":"Central Ethiopia, South Ethiopia","count":2},{"name":"Central Ethiopia and some other parts of Ethiopia","count":1},{"name":"Gurage","count":1},{"name":"South Ethiopia and some parts of Ethiopia","count":1}]},{"id":"ethiopia-tigrigna","country":"Ethiopia","label":"Tigrigna","file":"Ethiopia/Ethiopia - Tigrigna.xlsx","sheet":"Main - English","dishes":9,"groups":[{"name":"Tigray","count":6},{"name":"Tigray and most part of Ethiopia","count":1},{"name":"Tigray and Northern part of Ethiopia","count":1},{"name":"Tigray and most parts of Ethiopia","count":1}]}]},{"id":"ghana","name":"Ghana","files":[{"id":"ghana-twi","country":"Ghana","label":"Twi","file":"Ghana/Ghana - Twi.xlsx","sheet":"Main - English","dishes":48,"groups":[{"name":"Greater Accra Region","count":17},{"name":"Northern Region","count":3},{"name":"Central Region","count":2},{"name":"Northern Region, Upper East Region, Upper West Region","count":2},{"name":"All regions","count":2},{"name":"Greater Accra, Eastern regions","count":1},{"name":"Volta Region","count":1},{"name":"Brong-Ahafo Region, Ashanti Region","count":1},{"name":"Greater Accra Region and Volta Region","count":1},{"name":"Volta Region, Oti Region","count":1},{"name":"Greater Accra Region and Eastern region","count":1},{"name":"Western Region","count":1},{"name":"Bono East, Bono, Ashanti, Eastern, Central and Western Regions.","count":1},{"name":"Greater Accra Region ,volta region , Eastern regions","count":1},{"name":"Greater Accra, Volta, Eastern Regions","count":1},{"name":"Greater Accra, Central, Eastern, Ashanti Region","count":1},{"name":"Ashanti, Eastern, Central, Bono, Ahafo, Western, and Greater Accra Regions","count":1},{"name":"Greater Accra and Central regions","count":1},{"name":"Ashanti, Eastern, Central, and Greater Accra Regions","count":1},{"name":"Bono, Bono East, Ashanti, Eastern, Central and Greater Accra Regions","count":1},{"name":"Ashanti, Eastern, Western, Central, Bono and Greater Accra Regions","count":1},{"name":"Central, Western, Ashanti, Eastern, Bono and Bono East Regions.","count":1},{"name":"Ashanti Region and Eastern Region","count":1},{"name":"Greater Accra Region, Ashanti and Eastern Regions","count":1},{"name":"Ashanti Region, Eastern Region, Bono Region, and Greater Accra Region","count":1},{"name":"Greater Accra Region,Volta region","count":1},{"name":"Greater Accra Region, Ashanti, Eastern regions","count":1}]},{"id":"ghana-ewe","country":"Ghana","label":"Ewe","file":"Ghana/Ghana - Ewe.xlsx","sheet":"Main - English","dishes":48,"groups":[{"name":"Greater Accra Region","count":17},{"name":"Northern Region","count":3},{"name":"Central Region","count":2},{"name":"Northern Region, Upper East Region, Upper West Region","count":2},{"name":"All regions","count":2},{"name":"Greater Accra, Eastern regions","count":1},{"name":"Volta Region","count":1},{"name":"Brong-Ahafo Region, Ashanti Region","count":1},{"name":"Greater Accra Region and Volta Region","count":1},{"name":"Volta Region, Oti Region","count":1},{"name":"Greater Accra Region and Eastern region","count":1},{"name":"Western Region","count":1},{"name":"Bono East, Bono, Ashanti, Eastern, Central and Western Regions.","count":1},{"name":"Greater Accra Region ,volta region , Eastern regions","count":1},{"name":"Greater Accra, Volta, Eastern Regions","count":1},{"name":"Greater Accra, Central, Eastern, Ashanti Region","count":1},{"name":"Ashanti, Eastern, Central, Bono, Ahafo, Western, and Greater Accra Regions","count":1},{"name":"Greater Accra and Central regions","count":1},{"name":"Ashanti, Eastern, Central, and Greater Accra Regions","count":1},{"name":"Bono, Bono East, Ashanti, Eastern, Central and Greater Accra Regions","count":1},{"name":"Ashanti, Eastern, Western, Central, Bono and Greater Accra Regions","count":1},{"name":"Central, Western, Ashanti, Eastern, Bono and Bono East Regions.","count":1},{"name":"Ashanti Region and Eastern Region","count":1},{"name":"Greater Accra Region, Ashanti and Eastern Regions","count":1},{"name":"Ashanti Region, Eastern Region, Bono Region, and Greater Accra Region","count":1},{"name":"Greater Accra Region,Volta region","count":1},{"name":"Greater Accra Region, Ashanti, Eastern regions","count":1}],"duplicateOf":"ghana-twi"}]},{"id":"ivory-coast","name":"Ivory Coast","files":[{"id":"ivory-coast-dioula","country":"Ivory Coast","label":"Dioula","file":"Ivory Coast/Ivory Coast - Dioula.xlsx","sheet":"Main - English","dishes":29,"groups":[{"name":"Le nord de la Côte d'Ivoire","count":23},{"name":"Mandés du nord","count":5},{"name":"Le nord de la Côte d'Ivoire.","count":1}]}]},{"id":"kenya","name":"Kenya","files":[{"id":"kenya-kikuyu","country":"Kenya","label":"Kikuyu","file":"kenya/Kenya - Kikuyu.xlsx","sheet":"Main - English","dishes":19,"groups":[{"name":"Central Kenya","count":8},{"name":"Mount Kenya region","count":4},{"name":"Central Kenya/Mount Kenya region","count":2},{"name":"Central Kenya/ Mount Kenya region","count":2},{"name":"Central Kenya/Mount Kenya Region","count":1},{"name":"Central region","count":1},{"name":"Nyeri, Kirinyaga, Embu, Kiambu, Muranga","count":1}]},{"id":"kenya-luhya","country":"Kenya","label":"Luhya","file":"kenya/Kenya - Luhya.xlsx","sheet":"Main - English","dishes":17,"groups":[{"name":"Coastal region","count":5},{"name":"Western region","count":4},{"name":"Eastern region","count":2},{"name":"Rift valley region","count":1},{"name":"Eastern region : Kitui, Machakos","count":1},{"name":"Eastern Kenya- Meru County","count":1},{"name":"Meru region","count":1},{"name":"Rift Valley region","count":1},{"name":"Western region, Eastern region, Rift Valley region","count":1}]},{"id":"kenya-luo","country":"Kenya","label":"Luo","file":"kenya/Kenya - Luo.xlsx","sheet":"Main - English","dishes":20,"groups":[{"name":"Coastal Kenya, particularly Mombasa, Lamu, and other Swahili coastal communities","count":2},{"name":"Western Kenya, particularly the Lake Victoria region","count":2},{"name":"Coastal Kenya, particularly Mombasa and Lamu","count":2},{"name":"Coastal Kenya — Mombasa County, particularly Mombasa","count":1},{"name":"Western Kenya, particularly Luhya-inhabited areas.","count":1},{"name":"Western region","count":1},{"name":"Coastal Kenya, particularly Mombasa","count":1},{"name":"Western Kenya — Nyanza region, particularly Kisumu, Siaya, and Homa Bay counties","count":1},{"name":"Western Kenya, particularly Nyanza and the Lake Victoria region","count":1},{"name":"Coastal Kenya — Lamu, Mombasa, Kilifi and Kwale","count":1},{"name":"Coastal Kenya — Diani, Kwale County","count":1},{"name":"Western Kenya","count":1},{"name":"Western Kenya; Luo Nyanza","count":1},{"name":"Coastal Kenya, especially Mombasa and Lamu","count":1},{"name":"Coastal Kenya, particularly Mombasa, Malindi, Lamu, and the South Coast","count":1},{"name":"Central Kenya, particularly Kikuyu-inhabited areas","count":1},{"name":"Central Kenya, particularly Nyeri, Kirinyaga, Murang’a, Kiambu and Embu","count":1}]},{"id":"kenya-kalenjin","country":"Kenya","label":"Kalenjin","file":"kenya/Kenya -  kalenjin.xlsx","sheet":"Main - English","dishes":20,"groups":[{"name":"Mombasa","count":7},{"name":"Nairobi","count":5},{"name":"Kisumu","count":3},{"name":"Baringo","count":3},{"name":"Central","count":1},{"name":"Western","count":1}],"duplicateOf":"kenya-luo"}]},{"id":"madagascar","name":"Madagascar","files":[{"id":"madagascar-malagasy","country":"Madagascar","label":"Malagasy","file":"Madagascar/Madagascar - Malagasy.xlsx","sheet":"Main - English","dishes":25,"groups":[{"name":"Hautes Terres centrales (Imerina)","count":5},{"name":"Hautes Terres / central highlands (Imerina)","count":4},{"name":"Central highlands (Hautes Terres), around Antananarivo","count":2},{"name":"Hautes Terres (Imerina)","count":2},{"name":"Hautes-Terres / central highlands","count":1},{"name":"Central highlands (Hautes Terres)","count":1},{"name":"Central highlands (Hautes Terres), Imerina region","count":1},{"name":"Hautes Terres / central highlands (Imerina), Antananarivo","count":1},{"name":"Hautes Terres centrales, Moyen-Ouest, Vakinankaratra","count":1},{"name":"Hautes Terres, Talata (in the North of Antananarivo), Ambanitsena village (near Antananarivo, Route Nationale 2)","count":1},{"name":"Hautes Terres centrales (Imerina), Analamanga, Vakinankaratra","count":1},{"name":"Hautes Terres / Imerina, Antananarivo","count":1},{"name":"Hautes Terres (Antananarivo, Antsirabe)","count":1},{"name":"Hautes Terres (Merina region), also popular nationwide","count":1},{"name":"Hautes Terres centrales (Imerina), Antananarivo","count":1},{"name":"Hautes Terres (Imerina), Antananarivo, along the RN7","count":1}]}]},{"id":"mali","name":"Mali","files":[{"id":"mali-bambara","country":"Mali","label":"Bambara","file":"Mali/Mali - Bambara.xlsx","sheet":"Main - English","dishes":25,"groups":[{"name":"Koulikoro, Ségou, Sikasso, et le district de Bamako","count":8},{"name":"Koulikoro, Ségou, et le district de Bamako","count":3},{"name":"District de Bamako, Koulikoro, Ségou","count":2},{"name":"District de Bamako, Koulikoro, Ségou, Sikasso","count":2},{"name":"Koulikoro, Ségou, Sikasso, Mopti, Kayes, et le district de Bamako","count":1},{"name":"Koulikoro, Ségou, Sikasso, et le district de Bamako.","count":1},{"name":"Koulikoro, Sikasso et le district de Bamako","count":1},{"name":"Koulikoro, Ségou, Sikasso, Kayes et le district de Bamako","count":1},{"name":"Koulikoro, Ségou, Kayes, Mopti et le district de Bamako","count":1},{"name":"District de Bamako, Koulikoro, Ségou, Sikasso, Mopti","count":1},{"name":"District de Bamako, Koulikoro, Ségou, Sikasso, Kayes (vendu de manière universelle au coin de chaque rue et sur tous les marchés maliens).","count":1},{"name":"District de Bamako, Koulikoro, Ségou, Sikasso, Kayes","count":1},{"name":"Sikasso, Koulikoro, et le district de Bamako","count":1},{"name":"Ségou, Koulikoro, Mopti, Kayes, et le district de Bamako","count":1}]},{"id":"mali-sonike","country":"Mali","label":"Soniké","file":"Mali/Mali - Soniké.xlsx","sheet":"Main - English","dishes":28,"groups":[{"name":"Senoufo areas of southern Mali","count":5},{"name":"Kayes / western Mali","count":4},{"name":"Peulh communities","count":3},{"name":"Senoufo communities","count":2},{"name":"Segou and Mopti","count":1},{"name":"Guidimakha / western Mali","count":1},{"name":"Soninké areas of Mali / western Mali","count":1},{"name":"Fouta-Djalon","count":1},{"name":"Peulh","count":1},{"name":"Soninké","count":1},{"name":"Mopti, Segou, Tombouctou","count":1},{"name":"Sahelian and Fulani areas","count":1},{"name":"Dogon Country / Bandiagara","count":1},{"name":"Bandiagara / Dogon Country","count":1},{"name":"Western Mali / Kayes","count":1},{"name":"Soninké communities / western Mali","count":1},{"name":"Senoufo communities in Southern Mali","count":1},{"name":"Mopti, Ségou et Tombouctou","count":1}]}]},{"id":"nigeria","name":"Nigeria","files":[{"id":"nigeria-efik","country":"Nigeria","label":"Efik","file":"Nigeria/Nigeria - Efik.xlsx","sheet":"Main - English","dishes":25,"groups":[{"name":"Efik","count":23},{"name":"Ijaw, Ibibio, Andoni, Urhobo, Oro","count":1},{"name":"Ibibio, Igbo, Annang, Oro","count":1}]},{"id":"nigeria-hausa","country":"Nigeria","label":"Hausa","file":"Nigeria/Nigeria - Hausa.xlsx","sheet":"Main - English","dishes":25,"groups":[{"name":"Northern Nigeria","count":24},{"name":"Hausa","count":1}]},{"id":"nigeria-igbo","country":"Nigeria","label":"Igbo","file":"Nigeria/Nigeria - Igbo.xlsx","sheet":"Main - English","dishes":25,"groups":[{"name":"Southeastern Nigeria","count":13},{"name":"Igbo","count":3},{"name":"South Eastern Nigeria","count":2},{"name":"Southeast Nigeria","count":2},{"name":"Southeastern","count":2},{"name":"Enugu/Anambra/Ebonyi/Imo/Abia","count":1},{"name":"South East Nigeria","count":1},{"name":"Southeastern Nigeria, Southwestern Nigeria","count":1}]},{"id":"nigeria-yoruba","country":"Nigeria","label":"Yoruba","file":"Nigeria/Nigeria - Yoruba.xlsx","sheet":"Main - English","dishes":26,"groups":[{"name":"Southwest","count":23},{"name":"Yorùbá","count":1},{"name":"southwest","count":1},{"name":"Yoruba","count":1}]}]},{"id":"rwanda","name":"Rwanda","files":[{"id":"rwanda-kinyarwanda","country":"Rwanda","label":"Kinyarwanda","file":"Rwanda/Rwanda - Kinyarwanda.xlsx","sheet":"Main - English","dishes":35,"groups":[{"name":"North province","count":6},{"name":"Western province","count":3},{"name":"Western","count":2},{"name":"North","count":2},{"name":"Kigali City/ urban area","count":1},{"name":"Nyanza Region","count":1},{"name":"Nkombo Island region","count":1},{"name":"Rwandan communities of Rubavu/ western region","count":1},{"name":"Southern Province / particularly Nyamagabe region","count":1},{"name":"Gicumbi Rural area region","count":1},{"name":"Gicumbi community/ Northern region","count":1},{"name":"Burera/ Nothern region","count":1},{"name":"Eastern","count":1},{"name":"Nyagatare , Eastern region","count":1},{"name":"Rubavu community/ Rural area","count":1},{"name":"Rubavu western region","count":1},{"name":"Western Province, particularly the Lake Kivu area (Rusizi).","count":1},{"name":"Eastern community","count":1},{"name":"western region of Rwanda","count":1},{"name":"Nyagatare communities / Eastern Region","count":1},{"name":"Northern province","count":1},{"name":"Muhanga region/ souhern part of rwanda","count":1},{"name":"Southern province and northern province","count":1},{"name":"Western province,Northern province","count":1},{"name":"Northern Rwandan region","count":1},{"name":"Urban areas, particularly Kigali City","count":1}]}]},{"id":"somalie","name":"Somalie","files":[{"id":"somalie-somali","country":"Somalie","label":"Somali","file":"Somalie/Somalia - Somali.xlsx","sheet":"Main - English","dishes":26,"groups":[{"name":"Somaliland","count":4},{"name":"Muqdisho","count":3},{"name":"Somaliland — Maroodi Jeex, Togdheer, and Awdal","count":2},{"name":"Somaliland iyo Puntland","count":2},{"name":"Banaadir (Muqdisho)","count":1},{"name":"Maroodi Jeex — Hargeysa","count":1},{"name":"Puntland, inta badan Koonfurta-Bartamaha Soomaaliya","count":1},{"name":"Southern Somalia, especially Mogadishu and Kismayo","count":1},{"name":"Gobollo kala duwan oo Koonfurta Soomaaliya ah (Muqdisho, Baydhabo iyo Beledweyne)","count":1},{"name":"Somaliland — Maroodi Jeex","count":1},{"name":"Somaliland, Puntland","count":1},{"name":"Somaliland, Puntland, and other Somali-inhabited regions","count":1},{"name":"Somaliland — Maroodi Jeex, Togdheer, Awdal","count":1},{"name":"Southern Somalia (Mogadishu, Baidoa)","count":1},{"name":"Awdal","count":1},{"name":"Banaadir — Muqdisho","count":1},{"name":"Somaliland — Togdheer, Maroodi Jeex, and Sahil","count":1},{"name":"Southern regions, especially Mogadishu, Baidoa, and Kismayo","count":1},{"name":"Hargeysa, Maroodi Jeex, Somaliland","count":1}]}]},{"id":"south-africa","name":"South Africa","files":[{"id":"south-africa-isixhosa","country":"South Africa","label":"IsiXhosa","file":"South Africa/South Africa - IsiXhosa.xlsx","sheet":"Main - English","dishes":24,"groups":[{"name":"Eastern Cape","count":11},{"name":"Eastern Cape and other regions in South Africa","count":4},{"name":"Eastern Cape and other regions","count":4},{"name":"Eastern Cape, and throughout other South African provinces.","count":1},{"name":"Eastern cape, and other regions in South Africa","count":1},{"name":"Eastern Cape, Gauteng and other regions","count":1},{"name":"Eastern cape and other regions in South Africa","count":1},{"name":"Eastern Cape, Western Cape","count":1}]}]},{"id":"tanzania","name":"Tanzania","files":[{"id":"tanzania-swahili","country":"Tanzania","label":"Swahili","file":"Tanzania/Tanzania - Swahili.xlsx","sheet":"Main - English","dishes":58,"groups":[{"name":"Iringa","count":22},{"name":"East Africa","count":19},{"name":"Northern","count":3},{"name":"All regions in Tanzania","count":3},{"name":"Northern Tanzania","count":2},{"name":"All of Tanzania","count":2},{"name":"Iringa-kalenga","count":1},{"name":"All in Tanzania","count":1},{"name":"Bantu-Swahili","count":1},{"name":"Northern regions","count":1},{"name":"Hehe","count":1},{"name":"Lake zone","count":1},{"name":"Northern region- Mara","count":1}]}]},{"id":"uganda","name":"Uganda","files":[{"id":"uganda-acholi","country":"Uganda","label":"Acholi","file":"uganda/Uganda - Acholi.xlsx","sheet":"Main - English","dishes":25,"groups":[{"name":"Northern Uganda","count":8},{"name":"Lango Sub-region","count":5},{"name":"Northern Uganda, Eastern Uganda","count":2},{"name":"Northern Uganda, Central Uganda, Western Uganda, Eastern Uganda","count":1},{"name":"Northern Uganda, Central Uganda","count":1},{"name":"Lango sub-region and Acholi sub-region","count":1},{"name":"Northern, Eastern, Central Uganda","count":1},{"name":"Northern Uganda, West Nile Sub-region, Central Uganda/Buganda, Eastern region","count":1},{"name":"Northern Uganda, Western Uganda, Eastern Uganda","count":1},{"name":"Northern, Eastern, Central and Western Uganda","count":1},{"name":"Northern, Central, Eastern, Western Uganda","count":1},{"name":"Northern region of Uganda","count":1},{"name":"Northern Uganda, West Nile region of Uganda","count":1}]},{"id":"uganda-luganda","country":"Uganda","label":"Luganda","file":"uganda/Uganda - Luganda.xlsx","sheet":"Main - English","dishes":21,"groups":[{"name":"Ankole / Western Uganda","count":5},{"name":"Buganda / Central Uganda","count":5},{"name":"Teso / Eastern Uganda","count":3},{"name":"Northern Uganda / Acholi","count":2},{"name":"Northern Uganda","count":1},{"name":"Kigezi / Southwestern Uganda","count":1},{"name":"Acholi / Northern Uganda","count":1},{"name":"Buganda, Central Uganda","count":1},{"name":"Bugisu (Eastern Uganda)","count":1},{"name":"Uganda","count":1}]},{"id":"uganda-runyankole","country":"Uganda","label":"Runyankole","file":"uganda/Uganda - Runyankole.xlsx","sheet":"Main - English","dishes":21,"groups":[{"name":"Buganda region","count":3},{"name":"Central regions and road highways.","count":2},{"name":"Buganda region , Western Uganda.","count":2},{"name":"Buganda region and Busoga region","count":2},{"name":"Buganda region and Western region","count":1},{"name":"Buganda region, Busoga region, and Bunyoro region","count":1},{"name":"Regions around water bodies like lakes and rivers ie Busoga, Buganda, Bunyoro etc.","count":1},{"name":"Buganda region , Busoga region and west Nile","count":1},{"name":"Buganda region & Rwenzori region","count":1},{"name":"Buganda region, Bunyoro region, Ankole region, Busoga region, and West Nile region","count":1},{"name":"Buganda / Central Uganda","count":1},{"name":"Buganda region & Western region","count":1},{"name":"Buganda region ,Iteso sub region and Rwenzori region","count":1},{"name":"Busoga region and Buganda region","count":1},{"name":"Central region, Northern region and Western regions","count":1},{"name":"Rwenzori region","count":1}]}]},{"id":"zimbabwe","name":"Zimbabwe","files":[{"id":"zimbabwe-shona","country":"Zimbabwe","label":"Shona","file":"Zimbabwe/Zimbabwe - Shona.xlsx","sheet":"Main - English","dishes":28,"groups":[{"name":"Mashonaland West, Mashonaland East, Harare, Manicaland","count":10},{"name":"Mashonaland West, Mashonaland East, Harare, Manicaland,","count":3},{"name":"Mashonaland West, Mashonaland East, Harare, Manicaland, Bulawayo","count":3},{"name":"Mashonaland west, Mashonaland East. Manicaland, Harare.","count":1},{"name":"Harare","count":1},{"name":"Mahonaland West, Mashonaland East, Manicaland, Harare","count":1},{"name":"Mashonaland West, Mashonaland East, Manicaland, Harare","count":1},{"name":"Mashonaland west, Mashonaland East, Manicaland, Harare","count":1},{"name":"Mashonaland west, Mashonaland East, Harare, Manicaland","count":1},{"name":"Mashonaland West, Mashonaland East, Harare, Manicaland, Harare","count":1},{"name":"Harare, Manicaland, Mashonaland West, Mashonaland East","count":1},{"name":"Mashona","count":1},{"name":"Harare, Mashonaland West, Mashonaland East, Manicaland, Harare","count":1},{"name":"Mashonaland West, Mashonaland East, Harare Manicaland","count":1},{"name":"Bulawayo","count":1}]}]}];
+    const RULES = [];
+
+    const TEXT = {
+      fr: {
+        title: "Analyse des régions",
+        pageTitle: "AfriCuisine — Analyse des régions",
+        lede: "Nous analysons ici la colonne « Region(s) associated with the dish », afin de mieux comprendre la diversité géographique de la couverture du corpus collecté. L’extraction des données date du 22 octobre.",
+        ledeDate: "22 octobre",
+        countries: "Pays",
+        dishes: "Plats collectés",
+        dialects: "Dialectes terminés pour la traduction",
+        oneGroupStat: "Cellules vides dans cette colonne",
+        rulesTitle: "Harmonisations",
+        rulesCaption: "Le libellé retenu est celui fixé pour chaque regroupement. Les saisies des contributeurs sont mises à jour en conséquence.",
+        rulesHeaders: ["Pays", "Forme d’origine", "Libellé retenu"],
+        detailTitle: "Détail d’un pays",
+        country: "Pays",
+        filter: "Filtrer un libellé",
+        placeholder: "Luanda, Oromia…",
+        allFiles: "Tous les fichiers",
+        copy: "copie",
+        raw: "brut",
+        metaAll: (dishes, labels) => `${dishes} plats · ${labels} libellés · copies identiques exclues`,
+        metaFile: (file, sheet, dishes) => `${file} · ${sheet} · ${dishes} plats`,
+        groupHeaders: ["Région", "# de plats", "Pourcentage de la région", ""],
+        none: "Aucun libellé ne correspond.",
+        compareTitle: "Comparaison des pays",
+        compareLede: "Résumé. Pour chaque pays, le nombre de plats, le nombre de régions, et la région la plus fréquente, avec son nombre de plats et sa part des plats du pays.",
+        compareHeaders: ["Pays", "Plats", "# de régions", "Région la plus fréquente", "# de plats", "Pourcentage de la région"],
+        distinctStat: "Libellés de région distincts",
+        distinctTitle: "Groupes distincts par pays",
+        distinctLede: "Nombre de saisies/enregistrements qui ne citent qu’une seule communauté ou un seul groupe ethnoculturel/sous-groupe, dans chaque pays. Autrement dit, les plats ici ne se recoupent pas d’une communauté à l’autre.",
+        distinctCaption: (total) => `${total} communautés distinctes.`,
+        singleScale: "Plus de détails sur ce qui précède. Chaque pays liste ses groupes. La barre donne le nombre de plats, sur la même échelle partout.",
+        singleDishes: (n) => `${n} plats`,
+        singleNote: "On compte 112 groupes–pays, soit 102 noms de groupes distincts après déduplication entre pays, notamment Abakiga/Bakiga. Ces 102 noms comprennent encore des groupes et leurs sous-groupes, comme Oromo / Shewa Oromo ou Yoruba / Ìjẹ̀bú : c’est donc un total des groupes et sous-groupes tels que les contributeurs les ont fournis.",
+        pieTitle: "Plats avec exactement un groupe",
+        pieLede: "Le secteur principal reprend les plats rattachés à un seul groupe ethnoculturel ou sous-groupe. L’autre secteur rassemble le reste du corpus.",
+        pieOne: "Exactement un groupe",
+        pieOther: "Les autres",
+      },
+      en: {
+        title: "Regions analysis",
+        pageTitle: "AfriCuisine — Regions analysis",
+        lede: "Here we analyse the column “Region(s) associated with the dish”, to better understand the geographic coverage of the collected dataset. The data dump was made on October 22nd.",
+        ledeDate: "October 22nd",
+        countries: "Countries",
+        dishes: "Dishes collected",
+        dialects: "Dialects completed for the translation",
+        oneGroupStat: "Empty cells in this column",
+        rulesTitle: "Harmonizations",
+        rulesCaption: "The kept label is the one set for each grouping. The contributors’ inputs are updated accordingly.",
+        rulesHeaders: ["Country", "Original form", "Kept label"],
+        detailTitle: "Country detail",
+        country: "Country",
+        filter: "Filter a label",
+        placeholder: "Luanda, Oromia…",
+        allFiles: "All files",
+        copy: "copy",
+        raw: "raw",
+        metaAll: (dishes, labels) => `${dishes} dishes · ${labels} labels · identical copies excluded`,
+        metaFile: (file, sheet, dishes) => `${file} · ${sheet} · ${dishes} dishes`,
+        groupHeaders: ["Region", "# of dishes", "Percentage of the region", ""],
+        none: "No label matches this filter.",
+        compareTitle: "Country comparison",
+        compareLede: "Summary. For each country, the number of dishes, the number of regions, and the most frequent region, with its dish count and its share of the country’s dishes.",
+        compareHeaders: ["Country", "Dishes", "# of Regions", "Most frequent region", "# of dishes", "Percentage of the region"],
+        distinctStat: "Distinct region labels",
+        distinctTitle: "Distinct groups by country",
+        distinctLede: "Number of inputs/records that name only one community or ethnocultural group/subgroup, in each country. Ie, the dishes here do not overlap across communities.",
+        distinctCaption: (total) => `${total} distinct communities.`,
+        singleScale: "More details about the previous. Each country lists its groups. The bar is the number of dishes, on the same scale everywhere.",
+        singleDishes: (n) => `${n} dishes`,
+        singleNote: "This count covers 112 group–country pairs, that is 102 distinct group names after names repeated across countries are counted once, notably Abakiga/Bakiga. These 102 names still include groups and their subgroups, such as Oromo / Shewa Oromo or Yoruba / Ìjẹ̀bú, so this is a total of groups and subgroup the way they are provided by the contributors.",
+        pieTitle: "Dishes with exactly one group",
+        pieLede: "The main slice is the dishes tied to a single ethnocultural group or subgroup. The other slice is the rest of the corpus.",
+        pieOne: "Exactly one group",
+        pieOther: "The others",
+      },
+    };
+
+    const countrySelect = document.querySelector("#country");
+    const queryInput = document.querySelector("#query");
+    const filesEl = document.querySelector("#files");
+    let fileId = "all";
+    let lang = "fr";
+    try { if (localStorage.getItem("africuisine-lang") === "en") lang = "en"; } catch (error) { lang = "fr"; }
+    const t = () => TEXT[lang];
+    function displayCountry(country) {
+      if (lang === "en" && country.id === "somalie") return "Somalia";
+      return country.name;
+    }
+
+    function keptFiles(country) {
+      return country.files.filter((file) => !file.duplicateOf);
+    }
+    function canonical(countryId, name) {
+      const rule = RULES.find((item) => item.countryId === countryId && item.from === name);
+      return rule ? rule.to : name;
+    }
+    function merge(countryId, files) {
+      const counts = new Map();
+      let dishes = 0;
+      for (const file of files) {
+        dishes += file.dishes;
+        for (const group of file.groups) {
+          const name = canonical(countryId, group.name);
+          counts.set(name, (counts.get(name) || 0) + group.count);
+        }
+      }
+      const groups = [...counts.entries()]
+        .map(([name, count]) => ({ name, count }))
+        .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, lang));
+      return { dishes, groups };
+    }
+    function pct(count, total) {
+      if (!total) return "0%";
+      return Math.round((100 * count) / total) + "%";
+    }
+    function table(headers, rows, numeric) {
+      const thead = "<thead><tr>" + headers.map((h, i) => `<th class="${numeric.includes(i) ? "num" : ""}">${h}</th>`).join("") + "</tr></thead>";
+      const body = rows.map((row) => "<tr>" + row.map((cell, i) => `<td class="${numeric.includes(i) ? "num" : ""}">${cell}</td>`).join("") + "</tr>").join("");
+      return thead + "<tbody>" + (body || `<tr><td colspan="${headers.length}">${t().none}</td></tr>`) + "</tbody>";
+    }
+    function currentCountry() {
+      return COUNTRIES.find((item) => item.id === countrySelect.value) || COUNTRIES[0];
+    }
+    function selectionOf(country) {
+      if (fileId === "all" || !country.files.some((file) => file.id === fileId)) {
+        return merge(country.id, keptFiles(country));
+      }
+      const file = country.files.find((item) => item.id === fileId);
+      return merge(country.id, [file]);
+    }
+
+    const overview = COUNTRIES.map((country) => {
+      const totals = merge(country.id, keptFiles(country));
+      const top = totals.groups[0];
+      return {
+        name: country.name,
+        dishes: totals.dishes,
+        labels: totals.groups.length,
+        topName: top ? top.name : "",
+        topCount: top ? top.count : 0,
+        share: totals.dishes ? Math.round((100 * top.count) / totals.dishes) : 0,
+      };
+    }).sort((a, b) => b.dishes - a.dishes || a.name.localeCompare(b.name, lang));
+
+    const totalDishes = overview.reduce((sum, item) => sum + item.dishes, 0);
+    const countedFiles = COUNTRIES.reduce((sum, item) => sum + keptFiles(item).length, 0);
+    const emptyCells = 1;
+    const distinctLabels = COUNTRIES.reduce((sum, country) => sum + merge(country.id, keptFiles(country)).groups.length, 0);
+    // Note: distinctLabels is the sum of per-country distinct labels after rules (currently raw).
+
+    function paintChrome() {
+      const copy = t();
+      document.documentElement.lang = lang;
+      document.title = copy.pageTitle;
+      document.querySelector("#title").textContent = copy.title;
+      document.querySelector("#lede").innerHTML = copy.lede.replace(copy.ledeDate, `<mark>${copy.ledeDate}</mark>`);
+      document.querySelector("#lang-fr").setAttribute("aria-pressed", String(lang === "fr"));
+      document.querySelector("#lang-en").setAttribute("aria-pressed", String(lang === "en"));
+    document.querySelector("#stats").innerHTML = [
+        [String(COUNTRIES.length), copy.countries],
+        [String(totalDishes), copy.dishes],
+        [String(countedFiles), copy.dialects],
+        [String(emptyCells), copy.oneGroupStat],
+        [String(distinctLabels), copy.distinctStat],
+    ].map(([value, label]) => `<div class="stat"><b>${value}</b><span>${label}</span></div>`).join("");
+      document.querySelector("#rules-section").hidden = RULES.length === 0;
+      document.querySelector("#rules-title").textContent = copy.rulesTitle;
+      document.querySelector("#rules-caption").textContent = copy.rulesCaption;
+      document.querySelector("#detail-title").textContent = copy.detailTitle;
+      document.querySelector("#country-label").textContent = copy.country;
+      document.querySelector("#query-label").textContent = copy.filter;
+      queryInput.placeholder = copy.placeholder;
+      document.querySelector("#compare-title").textContent = copy.compareTitle;
+      document.querySelector("#compare-lede").textContent = copy.compareLede;
+      const selectedId = countrySelect.value;
+      countrySelect.innerHTML = COUNTRIES.map((country) => `<option value="${country.id}">${displayCountry(country)}</option>`).join("");
+      countrySelect.value = selectedId || "benin";
+      const rulesTable = document.querySelector("#rules");
+      const rulesWrap = document.querySelector("#rules-wrap");
+      rulesTable.innerHTML = table(
+        copy.rulesHeaders,
+      RULES.map((rule) => {
+        const country = COUNTRIES.find((item) => item.id === rule.countryId);
+          return [country ? displayCountry(country) : rule.countryId, rule.from, rule.to];
+      }),
+      []
+    );
+      const ruleRows = rulesTable.querySelectorAll("tbody tr");
+      if (ruleRows.length > 10) {
+        const top = rulesTable.getBoundingClientRect().top;
+        const cut = ruleRows[10].getBoundingClientRect().top;
+        rulesWrap.style.maxHeight = `${Math.ceil(cut - top)}px`;
+      } else {
+        rulesWrap.style.maxHeight = "";
+      }
+    document.querySelector("#overview").innerHTML = table(
+        copy.compareHeaders,
+        overview.map((item) => {
+          const country = COUNTRIES.find((entry) => entry.name === item.name);
+          return [country ? displayCountry(country) : item.name, String(item.dishes), String(item.labels), item.topName, String(item.topCount), item.share + "%"];
+        }),
+      [1, 2, 4, 5]
+    );
+    }
+
+    function render() {
+      const country = currentCountry();
+      if (fileId !== "all" && !country.files.some((file) => file.id === fileId)) fileId = "all";
+      const selected = selectionOf(country);
+      const needle = queryInput.value.trim().toLowerCase();
+      const groups = needle ? selected.groups.filter((group) => group.name.toLowerCase().includes(needle)) : selected.groups;
+      const max = groups.reduce((n, group) => Math.max(n, group.count), 0) || 1;
+
+      filesEl.innerHTML = "";
+      if (country.files.length > 1) {
+        const buttons = [{ id: "all", label: t().allFiles }].concat(country.files.map((file) => ({
+          id: file.id,
+          label: file.duplicateOf ? `${file.label} (${t().copy})` : file.raw ? `${file.label} (${t().raw})` : file.label,
+        })));
+        for (const button of buttons) {
+          const el = document.createElement("button");
+          el.className = "pill";
+          el.type = "button";
+          el.textContent = button.label;
+          el.setAttribute("aria-pressed", String(fileId === button.id));
+          el.addEventListener("click", () => { fileId = button.id; render(); });
+          filesEl.appendChild(el);
+        }
+      }
+
+      const active = country.files.find((file) => file.id === fileId);
+      document.querySelector("#selection-meta").textContent = fileId === "all"
+        ? t().metaAll(selected.dishes, selected.groups.length)
+        : t().metaFile(active.file, active.sheet, selected.dishes);
+
+      document.querySelector("#groups").innerHTML = table(
+        t().groupHeaders,
+        groups.map((group) => [
+          group.name,
+          String(group.count),
+          pct(group.count, selected.dishes),
+          `<div class="bar" style="width:${Math.round((100 * group.count) / max)}%"></div>`,
+        ]),
+        [1, 2]
+      );
+    }
+
+    function setLang(next) {
+      lang = next;
+      try { localStorage.setItem("africuisine-lang", next); } catch (error) { /* private mode */ }
+      paintChrome();
+      render();
+    }
+    document.querySelector("#lang-fr").addEventListener("click", () => setLang("fr"));
+    document.querySelector("#lang-en").addEventListener("click", () => setLang("en"));
+    countrySelect.addEventListener("change", () => { fileId = "all"; render(); });
+    queryInput.addEventListener("input", render);
+    paintChrome();
+    render();
+  </script>
+</body>
+</html>
