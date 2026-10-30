@@ -204,9 +204,10 @@
         singleScale: "Plus de détails sur ce qui précède. Chaque pays liste ses groupes. La barre donne le nombre de plats, sur la même échelle partout.",
         singleDishes: (n) => `${n} plats`,
         singleNote: "On compte 83 groupes–pays, soit 77 noms de groupes distincts après déduplication entre pays (un même nom présent dans plusieurs pays n’est compté qu’une fois).",
-        pieTitle: "Plats avec exactement un groupe",
-        pieLede: "Le secteur principal reprend les plats rattachés à un seul groupe ethnoculturel ou sous-groupe. L’autre secteur rassemble le reste du corpus.",
+        pieTitle: "Plats selon le nombre de groupes",
+        pieLede: "Répartition des plats selon que le libellé ethnoculturel désigne un seul groupe, exactement deux groupes, ou un autre cas (plusieurs communautés, « all people », etc.).",
         pieOne: "Exactement un groupe",
+        pieTwo: "Exactement deux groupes",
         pieOther: "Les autres",
       },
       en: {
@@ -242,9 +243,10 @@
         singleScale: "More details about the previous. Each country lists its groups. The bar is the number of dishes, on the same scale everywhere.",
         singleDishes: (n) => `${n} dishes`,
         singleNote: "This count covers 83 group–country pairs, that is 77 distinct group names after names repeated across countries are counted once.",
-        pieTitle: "Dishes with exactly one group",
-        pieLede: "The main slice is the dishes tied to a single ethnocultural group or subgroup. The other slice is the rest of the corpus.",
+        pieTitle: "Dishes by number of groups",
+        pieLede: "Breakdown of dishes by whether the ethnocultural label names one group, exactly two groups, or another case (several communities, “all people”, etc.).",
         pieOne: "Exactly one group",
+        pieTwo: "Exactly two groups",
         pieOther: "The others",
       },
     };
@@ -319,7 +321,9 @@
     const totalDishes = overview.reduce((sum, item) => sum + item.dishes, 0);
     const countedFiles = COUNTRIES.reduce((sum, item) => sum + keptFiles(item).length, 0);
     const oneGroupDishes = 662;
-    const otherDishes = totalDishes - oneGroupDishes;
+    const pieOneDishes = 725;
+    const pieTwoDishes = 43;
+    const pieOtherDishes = totalDishes - pieOneDishes - pieTwoDishes;
     const distinctTotal = 83;
     const SINGLE_GROUPS = [
       { id: "angola", count: 5, dishes: 39, groups: "Ambundu People 17 ; Bakongo People 11 ; Ovambo People 1 ; Ovimbundu People 8 ; Tchokwe People 2" },
@@ -360,8 +364,9 @@
       document.querySelector("#pie-title").textContent = copy.pieTitle;
       document.querySelector("#pie-lede").textContent = copy.pieLede;
       const pieSlices = [
-        { label: copy.pieOne, count: oneGroupDishes, color: "#6aa84f" },
-        { label: copy.pieOther, count: otherDishes, color: "#6d9eeb" },
+        { label: copy.pieOne, count: pieOneDishes, color: "#6aa84f" },
+        { label: copy.pieTwo, count: pieTwoDishes, color: "#e69138" },
+        { label: copy.pieOther, count: pieOtherDishes, color: "#6d9eeb" },
       ];
       const pieTotal = pieSlices.reduce((sum, slice) => sum + slice.count, 0);
       function piePath(start, end) {
