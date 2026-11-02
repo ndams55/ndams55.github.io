@@ -198,7 +198,7 @@
         compareLede: "Résumé. Pour chaque pays, le nombre de plats, le nombre de groupes, et le groupe le plus fréquent, avec son nombre de plats et sa part des plats du pays.",
         compareHeaders: ["Pays", "Plats", "# de groupes", "Groupe le plus fréquent", "# de plats", "Pourcentage du groupe"],
         distinctStat: "Communautés distinctes",
-        mainCommunityStat: "Communautés principales",
+        mainCommunityStat: (dishes) => `Communautés principales avec ${dishes} plats associés`,
         distinctTitle: "Groupes distincts par pays",
         distinctLede: "Communautés principales uniquement : un seul groupe ethnoculturel par libellé. Hors « All people and communities… » et hors associations de deux groupes (ex. Bakongo-Mongo, Akan-Ga).",
         distinctCaption: (total) => `${total} communautés principales.`,
@@ -206,7 +206,7 @@
         singleDishes: (n) => `${n} plats`,
         singleNote: "On compte 75 paires groupe–pays, soit 69 communautés principales distinctes après déduplication entre pays.",
         pieTitle: "Plats selon le nombre de groupes",
-        pieLede: "Répartition des plats selon que le libellé ethnoculturel désigne un seul groupe, exactement deux groupes, ou un autre cas (plusieurs communautés, « all people », etc.).",
+        pieLede: "Même logique que les communautés principales : un seul groupe, exactement deux groupes (ex. Bakongo-Mongo), ou autre (« All people… », listes, etc.).",
         pieOne: "Exactement un groupe",
         pieTwo: "Exactement deux groupes",
         pieOther: "Les autres (dans tous les pays)",
@@ -238,7 +238,7 @@
         compareLede: "Summary. For each country, the number of dishes, the number of groups, and the most frequent group, with its dish count and its share of the country’s dishes.",
         compareHeaders: ["Country", "Dishes", "# of Groups", "Most frequent group", "# of dishes", "Percentage of the group"],
         distinctStat: "Distinct communities",
-        mainCommunityStat: "Main communities",
+        mainCommunityStat: (dishes) => `Main communities with ${dishes} dishes associated`,
         distinctTitle: "Distinct groups by country",
         distinctLede: "Main communities only: labels that name a single ethnocultural group. Excludes “All people and communities…” and two-group associations (e.g. Bakongo-Mongo, Akan-Ga).",
         distinctCaption: (total) => `${total} main communities.`,
@@ -246,7 +246,7 @@
         singleDishes: (n) => `${n} dishes`,
         singleNote: "This count covers 75 group–country pairs, that is 69 distinct main community names after names repeated across countries are counted once.",
         pieTitle: "Dishes by number of groups",
-        pieLede: "Breakdown of dishes by whether the ethnocultural label names one group, exactly two groups, or another case (several communities, “all people”, etc.).",
+        pieLede: "Same logic as main communities: one group, exactly two groups (e.g. Bakongo-Mongo), or other (“All people…”, lists, etc.).",
         pieOne: "Exactly one group",
         pieTwo: "Exactly two groups",
         pieOther: "The others (All around the countries)",
@@ -323,8 +323,8 @@
     const totalDishes = overview.reduce((sum, item) => sum + item.dishes, 0);
     const countedFiles = COUNTRIES.reduce((sum, item) => sum + keptFiles(item).length, 0);
     const oneGroupDishes = 804;
-    const pieOneDishes = 723;
-    const pieTwoDishes = 43;
+    const pieOneDishes = 712;
+    const pieTwoDishes = 53;
     const pieOtherDishes = totalDishes - pieOneDishes - pieTwoDishes;
     const distinctTotal = 97;
     const mainCommunityTotal = 69;
@@ -364,7 +364,7 @@
         [String(countedFiles), copy.dialects],
         [String(oneGroupDishes), copy.oneGroupStat(distinctTotal)],
         [String(distinctTotal), copy.distinctStat],
-        [String(mainCommunityTotal), copy.mainCommunityStat],
+        [String(mainCommunityTotal), copy.mainCommunityStat(mainCommunityDishes)],
     ].map(([value, label]) => `<div class="stat"><b>${value}</b><span>${label}</span></div>`).join("");
       document.querySelector("#pie-title").textContent = copy.pieTitle;
       document.querySelector("#pie-lede").textContent = copy.pieLede;
