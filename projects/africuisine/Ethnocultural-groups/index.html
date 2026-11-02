@@ -198,12 +198,13 @@
         compareLede: "Résumé. Pour chaque pays, le nombre de plats, le nombre de groupes, et le groupe le plus fréquent, avec son nombre de plats et sa part des plats du pays.",
         compareHeaders: ["Pays", "Plats", "# de groupes", "Groupe le plus fréquent", "# de plats", "Pourcentage du groupe"],
         distinctStat: "Communautés distinctes",
+        mainCommunityStat: "Communautés principales",
         distinctTitle: "Groupes distincts par pays",
-        distinctLede: "Nombre de saisies/enregistrements qui ne citent qu’une seule communauté ou un seul groupe ethnoculturel/sous-groupe, dans chaque pays. Autrement dit, les plats ici ne se recoupent pas d’une communauté à l’autre.",
-        distinctCaption: (total) => `${total} communautés distinctes.`,
-        singleScale: "Plus de détails sur ce qui précède. Chaque pays liste ses groupes. La barre donne le nombre de plats, sur la même échelle partout.",
+        distinctLede: "Communautés principales uniquement : un seul groupe ethnoculturel par libellé. Hors « All people and communities… » et hors associations de deux groupes (ex. Bakongo-Mongo, Akan-Ga).",
+        distinctCaption: (total) => `${total} communautés principales.`,
+        singleScale: "Détail par pays des communautés principales. La barre donne le nombre de plats, sur la même échelle partout.",
         singleDishes: (n) => `${n} plats`,
-        singleNote: "On compte 103 groupes–pays, soit 97 noms de groupes distincts après déduplication entre pays (un même nom présent dans plusieurs pays n’est compté qu’une fois).",
+        singleNote: "On compte 75 paires groupe–pays, soit 69 communautés principales distinctes après déduplication entre pays.",
         pieTitle: "Plats selon le nombre de groupes",
         pieLede: "Répartition des plats selon que le libellé ethnoculturel désigne un seul groupe, exactement deux groupes, ou un autre cas (plusieurs communautés, « all people », etc.).",
         pieOne: "Exactement un groupe",
@@ -237,12 +238,13 @@
         compareLede: "Summary. For each country, the number of dishes, the number of groups, and the most frequent group, with its dish count and its share of the country’s dishes.",
         compareHeaders: ["Country", "Dishes", "# of Groups", "Most frequent group", "# of dishes", "Percentage of the group"],
         distinctStat: "Distinct communities",
+        mainCommunityStat: "Main communities",
         distinctTitle: "Distinct groups by country",
-        distinctLede: "Number of inputs/records that name only one community or ethnocultural group/subgroup, in each country. Ie, the dishes here do not overlap across communities.",
-        distinctCaption: (total) => `${total} distinct communities.`,
-        singleScale: "More details about the previous. Each country lists its groups. The bar is the number of dishes, on the same scale everywhere.",
+        distinctLede: "Main communities only: labels that name a single ethnocultural group. Excludes “All people and communities…” and two-group associations (e.g. Bakongo-Mongo, Akan-Ga).",
+        distinctCaption: (total) => `${total} main communities.`,
+        singleScale: "Country-level detail of main communities. The bar is the number of dishes, on the same scale everywhere.",
         singleDishes: (n) => `${n} dishes`,
-        singleNote: "This count covers 103 group–country pairs, that is 97 distinct group names after names repeated across countries are counted once.",
+        singleNote: "This count covers 75 group–country pairs, that is 69 distinct main community names after names repeated across countries are counted once.",
         pieTitle: "Dishes by number of groups",
         pieLede: "Breakdown of dishes by whether the ethnocultural label names one group, exactly two groups, or another case (several communities, “all people”, etc.).",
         pieOne: "Exactly one group",
@@ -325,24 +327,26 @@
     const pieTwoDishes = 43;
     const pieOtherDishes = totalDishes - pieOneDishes - pieTwoDishes;
     const distinctTotal = 97;
+    const mainCommunityTotal = 69;
+    const mainCommunityDishes = 712;
     const SINGLE_GROUPS = [
       { id: "angola", count: 5, dishes: 39, groups: "Ambundu People 17 ; Bakongo People 11 ; Ovimbundu People 8 ; Tchokwe People 2 ; Ovambo People 1" },
       { id: "benin", count: 6, dishes: 39, groups: "Yoruba Communities 16 ; Fon People 11 ; Goun People 5 ; Mina People 4 ; Aja People 2 ; Bariba (Baatombu) People 1" },
-      { id: "cameroon", count: 5, dishes: 71, groups: "Bamiléké Communities 25 ; Sawa Communities 22 ; Fang-Beti / Ekang Communities 21 ; Banyang (Bayangi) Communities 2 ; All people and communities in Cameroon 1" },
+      { id: "cameroon", count: 4, dishes: 70, groups: "Bamiléké Communities 25 ; Sawa Communities 22 ; Fang-Beti / Ekang Communities 21 ; Banyang (Bayangi) Communities 2" },
       { id: "chad", count: 1, dishes: 18, groups: "Sara Communities 18" },
-      { id: "drc", count: 7, dishes: 47, groups: "Bakongo Communities 18 ; Mongo Communities 10 ; Luba Communities 7 ; Bakongo-Mongo Communities 5 ; Bakongo-Luba Communities 4 ; Swahili Communities 2 ; Bakongo-Swahili Communities 1" },
+      { id: "drc", count: 4, dishes: 37, groups: "Bakongo Communities 18 ; Mongo Communities 10 ; Luba Communities 7 ; Swahili Communities 2" },
       { id: "ethiopia", count: 4, dishes: 40, groups: "Gurage Communities 12 ; Oromo people 12 ; Tigray Communities 9 ; Amhara Communities 7" },
-      { id: "ghana", count: 7, dishes: 48, groups: "Ga Communities 22 ; Akan Communities 12 ; Akan-Ga Communities 4 ; Ga-Ewe Communities 3 ; Hausa Communities 3 ; Dagomba Communities 2 ; Ewe communities 2" },
-      { id: "ivory-coast", count: 10, dishes: 29, groups: "Mande Communities 10 ; Mande-Akan 4 ; Senufo People 4 ; Akan communities 3 ; Mande-Sénoufo 3 ; Akan-Bete 1 ; Akan-Sénoufo 1 ; Fula People 1 ; Koulango People 1 ; Koulango-Sénoufo 1" },
-      { id: "kenya", count: 10, dishes: 56, groups: "Agikuyu/Kikuyu People 16 ; Swahili Communities 10 ; All people and communities in Kenya 6 ; Luhya Communities 6 ; Luo Communities 5 ; Mijikenda Communities 5 ; Ameru Communities 3 ; Kalenjin Communities 2 ; Kamba Communities 2 ; Iteso Communities 1" },
-      { id: "madagascar", count: 2, dishes: 25, groups: "Merina Communities 24 ; Merina-Betsileo 1" },
-      { id: "mali", count: 6, dishes: 53, groups: "Bambara Communities 25 ; Soninké People 9 ; Fula People 8 ; Senoufo People 8 ; Dogon People 2 ; All people and communities in Mali 1" },
-      { id: "nigeria", count: 5, dishes: 101, groups: "Yoruba Communities 26 ; Hausa Communities 25 ; Igbo People 25 ; Efik Communities 24 ; All people and communities in Nigeria 1" },
-      { id: "rwanda", count: 3, dishes: 35, groups: "Banyarwanda People 33 ; Abashi People 1 ; Banyarwanda-Abashi 1" },
+      { id: "ghana", count: 5, dishes: 41, groups: "Ga Communities 22 ; Akan Communities 12 ; Hausa Communities 3 ; Dagomba Communities 2 ; Ewe communities 2" },
+      { id: "ivory-coast", count: 5, dishes: 19, groups: "Mande Communities 10 ; Senufo People 4 ; Akan communities 3 ; Fula People 1 ; Koulango People 1" },
+      { id: "kenya", count: 9, dishes: 50, groups: "Agikuyu/Kikuyu People 16 ; Swahili Communities 10 ; Luhya Communities 6 ; Luo Communities 5 ; Mijikenda Communities 5 ; Ameru Communities 3 ; Kalenjin Communities 2 ; Kamba Communities 2 ; Iteso Communities 1" },
+      { id: "madagascar", count: 1, dishes: 24, groups: "Merina Communities 24" },
+      { id: "mali", count: 5, dishes: 52, groups: "Bambara Communities 25 ; Soninké People 9 ; Fula People 8 ; Senoufo People 8 ; Dogon People 2" },
+      { id: "nigeria", count: 4, dishes: 100, groups: "Yoruba Communities 26 ; Hausa Communities 25 ; Igbo People 25 ; Efik Communities 24" },
+      { id: "rwanda", count: 2, dishes: 34, groups: "Banyarwanda People 33 ; Abashi People 1" },
       { id: "somalie", count: 1, dishes: 26, groups: "Somali People 26" },
-      { id: "south-africa", count: 5, dishes: 24, groups: "All people and communities in South Africa 8 ; Zulu Communities 8 ; Xhosa Communities 4 ; Zulu-Ndebele 3 ; Xhosa-Zulu 1" },
-      { id: "tanzania", count: 11, dishes: 58, groups: "Hehe Communities 24 ; Swahili Communities 15 ; All people and communities in Tanzania 9 ; Chagga-Haya 2 ; Sukuma-Nyamwezi 2 ; Chagga People 1 ; Chagga-Kurya 1 ; Kerewe-Jita 1 ; Kerewe-Sukuma 1 ; Kurya People 1 ; Nyiramba People 1" },
-      { id: "uganda", count: 13, dishes: 67, groups: "Baganda Communities 22 ; All people and communities in Uganda 13 ; Lango-Acholi 12 ; Acholi Communities 5 ; Banyankole Communities 5 ; Iteso Communities 3 ; Bagisu People 1 ; Bakiga People 1 ; Bakonzo People 1 ; Bakonzo-Iteso 1 ; Banyoro People 1 ; Basoga People 1 ; Lango Communities 1" },
+      { id: "south-africa", count: 2, dishes: 12, groups: "Zulu Communities 8 ; Xhosa Communities 4" },
+      { id: "tanzania", count: 5, dishes: 42, groups: "Hehe Communities 24 ; Swahili Communities 15 ; Chagga People 1 ; Kurya People 1 ; Nyiramba People 1" },
+      { id: "uganda", count: 10, dishes: 41, groups: "Baganda Communities 22 ; Acholi Communities 5 ; Banyankole Communities 5 ; Iteso Communities 3 ; Bagisu People 1 ; Bakiga People 1 ; Bakonzo People 1 ; Banyoro People 1 ; Basoga People 1 ; Lango Communities 1" },
       { id: "zimbabwe", count: 2, dishes: 28, groups: "Shona Communities 26 ; Ndebele Communities 2" }
     ];
 
@@ -360,6 +364,7 @@
         [String(countedFiles), copy.dialects],
         [String(oneGroupDishes), copy.oneGroupStat(distinctTotal)],
         [String(distinctTotal), copy.distinctStat],
+        [String(mainCommunityTotal), copy.mainCommunityStat],
     ].map(([value, label]) => `<div class="stat"><b>${value}</b><span>${label}</span></div>`).join("");
       document.querySelector("#pie-title").textContent = copy.pieTitle;
       document.querySelector("#pie-lede").textContent = copy.pieLede;
@@ -390,7 +395,7 @@
       }).join("");
       document.querySelector("#distinct-title").textContent = copy.distinctTitle;
       document.querySelector("#distinct-lede").textContent = copy.distinctLede;
-      document.querySelector("#distinct-caption").textContent = copy.distinctCaption(distinctTotal);
+      document.querySelector("#distinct-caption").textContent = copy.distinctCaption(mainCommunityTotal);
       document.querySelector("#single-scale").textContent = copy.singleScale;
       document.querySelector("#single-note").textContent = copy.singleNote;
       const parsedGroups = SINGLE_GROUPS.map((row) => ({
