@@ -206,8 +206,9 @@
         singleDishes: (n) => `${n} plats`,
         singleNote: "On compte 75 paires groupe–pays, soit 69 communautés principales distinctes après déduplication entre pays.",
         pieTitle: "Plats selon le nombre de groupes",
-        pieLede: "Même logique que les communautés principales : un seul groupe, exactement deux groupes (ex. Bakongo-Mongo), ou autre (« All people… », listes, etc.).",
-        pieOne: "Exactement un groupe",
+        pieLede: "Même logique que les communautés principales. La part « un seul groupe » est séparée selon que cette communauté regroupe moins de 3 plats, ou 3 plats et plus.",
+        pieOneLow: "Exactement un groupe, < 3 plats",
+        pieOneHigh: "Exactement un groupe, ≥ 3 plats",
         pieTwo: "Exactement deux groupes",
         pieOther: "Les autres (dans tous les pays)",
       },
@@ -246,8 +247,9 @@
         singleDishes: (n) => `${n} dishes`,
         singleNote: "This count covers 75 group–country pairs, that is 69 distinct main community names after names repeated across countries are counted once.",
         pieTitle: "Dishes by number of groups",
-        pieLede: "Same logic as main communities: one group, exactly two groups (e.g. Bakongo-Mongo), or other (“All people…”, lists, etc.).",
-        pieOne: "Exactly one group",
+        pieLede: "Same logic as main communities. The “one group” share is split by whether that community has fewer than 3 dishes, or 3 dishes or more.",
+        pieOneLow: "Exactly one group, < 3 dishes",
+        pieOneHigh: "Exactly one group, ≥ 3 dishes",
         pieTwo: "Exactly two groups",
         pieOther: "The others (All around the countries)",
       },
@@ -323,9 +325,10 @@
     const totalDishes = overview.reduce((sum, item) => sum + item.dishes, 0);
     const countedFiles = COUNTRIES.reduce((sum, item) => sum + keptFiles(item).length, 0);
     const oneGroupDishes = 804;
-    const pieOneDishes = 712;
+    const pieOneLowDishes = 31;
+    const pieOneHighDishes = 681;
     const pieTwoDishes = 53;
-    const pieOtherDishes = totalDishes - pieOneDishes - pieTwoDishes;
+    const pieOtherDishes = totalDishes - pieOneLowDishes - pieOneHighDishes - pieTwoDishes;
     const distinctTotal = 97;
     const mainCommunityTotal = 69;
     const mainCommunityDishes = 712;
@@ -369,7 +372,8 @@
       document.querySelector("#pie-title").textContent = copy.pieTitle;
       document.querySelector("#pie-lede").textContent = copy.pieLede;
       const pieSlices = [
-        { label: copy.pieOne, count: pieOneDishes, color: "#6aa84f" },
+        { label: copy.pieOneLow, count: pieOneLowDishes, color: "#b6d7a8" },
+        { label: copy.pieOneHigh, count: pieOneHighDishes, color: "#6aa84f" },
         { label: copy.pieTwo, count: pieTwoDishes, color: "#e69138" },
         { label: copy.pieOther, count: pieOtherDishes, color: "#6d9eeb" },
       ];
