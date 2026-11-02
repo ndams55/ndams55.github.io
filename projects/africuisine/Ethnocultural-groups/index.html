@@ -199,6 +199,7 @@
         compareHeaders: ["Pays", "Plats", "# de groupes", "Groupe le plus fréquent", "# de plats", "Pourcentage du groupe"],
         distinctStat: "Communautés distinctes",
         mainCommunityStat: (dishes) => `Communautés principales avec ${dishes} plats associés`,
+        mainCommunityHighStat: (dishes) => `Communautés principales avec # plats ≥ 3 (${dishes} plats)`,
         distinctTitle: "Groupes distincts par pays",
         distinctLede: "Communautés principales uniquement : un seul groupe ethnoculturel par libellé. Hors « All people and communities… » et hors associations de deux groupes (ex. Bakongo-Mongo, Akan-Ga).",
         distinctCaption: (total) => `${total} communautés principales.`,
@@ -240,6 +241,7 @@
         compareHeaders: ["Country", "Dishes", "# of Groups", "Most frequent group", "# of dishes", "Percentage of the group"],
         distinctStat: "Distinct communities",
         mainCommunityStat: (dishes) => `Main communities with ${dishes} dishes associated`,
+        mainCommunityHighStat: (dishes) => `Main communities with # dishes ≥ 3 (${dishes} dishes)`,
         distinctTitle: "Distinct groups by country",
         distinctLede: "Main communities only: labels that name a single ethnocultural group. Excludes “All people and communities…” and two-group associations (e.g. Bakongo-Mongo, Akan-Ga).",
         distinctCaption: (total) => `${total} main communities.`,
@@ -332,6 +334,8 @@
     const distinctTotal = 97;
     const mainCommunityTotal = 69;
     const mainCommunityDishes = 712;
+    const mainCommunityHighTotal = 47;
+    const mainCommunityHighDishes = 681;
     const SINGLE_GROUPS = [
       { id: "angola", count: 5, dishes: 39, groups: "Ambundu People 17 ; Bakongo People 11 ; Ovimbundu People 8 ; Tchokwe People 2 ; Ovambo People 1" },
       { id: "benin", count: 6, dishes: 39, groups: "Yoruba Communities 16 ; Fon People 11 ; Goun People 5 ; Mina People 4 ; Aja People 2 ; Bariba (Baatombu) People 1" },
@@ -368,6 +372,7 @@
         [String(oneGroupDishes), copy.oneGroupStat(distinctTotal)],
         [String(distinctTotal), copy.distinctStat],
         [String(mainCommunityTotal), copy.mainCommunityStat(mainCommunityDishes)],
+        [String(mainCommunityHighTotal), copy.mainCommunityHighStat(mainCommunityHighDishes)],
     ].map(([value, label]) => `<div class="stat"><b>${value}</b><span>${label}</span></div>`).join("");
       document.querySelector("#pie-title").textContent = copy.pieTitle;
       document.querySelector("#pie-lede").textContent = copy.pieLede;
